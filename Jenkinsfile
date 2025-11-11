@@ -58,6 +58,8 @@ pipeline {
                     echo "Deploying Application to EC2 Server..."
                     sh """
                         ssh -o StrictHostKeyChecking=no ${APP_SERVER} '
+                            aws ecr get-login-password --region ${AWS_REGION} \ 
+                            | docker login --username AWS --password-stdin ${ECR_REPO} && \ 
                             docker system prune -af && \
                             docker pull ${ECR_REPO}:${IMAGE_TAG} && \
                             docker run -d -p 33333:33333 --name ${APP_NAME} ${ECR_REPO}:${IMAGE_TAG}
